@@ -89,3 +89,6 @@
       - "{{ minio_user.home }}/data:/mnt/data"
       - "{{ minio_user.home }}/minio.license:/minio.license"
       - "{{ minio_user.home }}/certs:/etc/minio/certs"
+    env:
+      MINIO_ROOT_USER: "{{ minio_podman_root_user }}"
+      MINIO_ROOT_PASSWORD: "{{ minio_podman_root_password }}"
