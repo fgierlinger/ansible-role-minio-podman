@@ -17,7 +17,7 @@ minio_podman_image: "quay.io/minio/aistor/minio:latest"
 minio_podman_pod_name: "minio"
 
 # license key for minio
-minio_license_key: ""
+minio_podman_license_key: ""
 
 # root user for minio. This is the user that will be used to log in to the minio web interface and CLI.
 minio_podman_root_user: "minioadmin"

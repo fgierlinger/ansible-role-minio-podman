@@ -3,7 +3,7 @@
 - name: Ensure required variables are defined
   ansible.builtin.fail:
     msg: "The variable '{{ item }}' is required but not defined."
-  loop: [minio_license_key]
+  loop: [minio_podman_license_key]
   when: lookup('vars', item, default='') == ""
 
 - name: Create minio group.
@@ -66,7 +66,7 @@
 
 - name: Create license key file for minio.
   ansible.builtin.copy:
-    content: "{{ minio_license_key }}"
+    content: "{{ minio_podman_license_key }}"
     dest: "{{ minio_user.home }}/minio.license"
     owner: "{{ minio_user.name }}"
     group: "{{ minio_user.name }}"

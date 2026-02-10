@@ -71,7 +71,7 @@ The root password for MinIO. This is the password that will be used to log in to
 ### Minio-License
 
 ```yaml
-minio_license_key: ""
+minio_podman_license_key: ""
 ```
 
 **Required.** The MinIO license key. This must be provided for the role to run successfully.
@@ -90,7 +90,7 @@ dependencies.
   roles:
     - role: fgierlinger.minio_podman
       vars:
-        minio_license_key: "{{ vault_minio_license_key }}"
+        minio_podman_license_key: "{{ vault_minio_podman_license_key }}"
 
 ---
 - hosts: storage_servers
@@ -98,7 +98,7 @@ dependencies.
   roles:
     - role: fgierlinger.minio_podman
       vars:
-        minio_license_key: "{{ vault_minio_license_key }}"
+        minio_podman_license_key: "{{ vault_minio_podman_license_key }}"
         minio_podman_root_user:
 ```
 

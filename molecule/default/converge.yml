@@ -4,6 +4,6 @@
   hosts: all
   gather_facts: false
   vars:
-    minio_license_key: "ThisIsADummyLicenseKeyForTestingPurposesOnly"
+    minio_podman_license_key: "ThisIsADummyLicenseKeyForTestingPurposesOnly"
   roles:
     - role: fgierlinger.minio_podman
