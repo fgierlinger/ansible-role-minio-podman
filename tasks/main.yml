@@ -1,0 +1,91 @@
+---
+# SPDX-License-Identifier: MIT-0
+- name: Ensure required variables are defined
+  ansible.builtin.fail:
+    msg: "The variable '{{ item }}' is required but not defined."
+  loop: [minio_license_key]
+  when: lookup('vars', item, default='') == ""
+
+- name: Create minio group.
+  ansible.builtin.group:
+    name: "{{ minio_podman_group }}"
+    state: present
+
+- name: Create minio user.
+  ansible.builtin.user:
+    name: "{{ minio_podman_user }}"
+    group: "{{ minio_podman_group }}"
+    create_home: true
+    system: true
+    shell: "{{ minio_podman_shell }}"
+  register: minio_user
+
+# By default, unprivileged user services (like Podman) are killed when the user logs out. For a server like Minio, you need to
+# "enable lingering." This allows the user's manager process to start at boot and stay running.
+- name: Enable lingering for minio user
+  ansible.builtin.command:
+    cmd: "loginctl enable-linger {{ minio_user.name }}"
+    creates: "/var/lib/systemd/linger/{{ minio_user.name }}"
+
+- name: Allow minio user to map UIDs (subuid)
+  ansible.builtin.lineinfile:
+    path: /etc/subuid
+    line: "{{ minio_user.name }}:100000:65536"
+    regexp: "^{{ minio_user.name }}:"
+    state: present
+
+- name: Allow minio user to map GIDs (subgid)
+  ansible.builtin.lineinfile:
+    path: /etc/subgid
+    line: "{{ minio_user.name }}:100000:65536"
+    regexp: "^{{ minio_user.name }}:"
+    state: present
+
+- name: Install podman.
+  ansible.builtin.apt:
+    name: podman
+    state: present
+    update_cache: true
+
+- name: Pull minio image.
+  become: true
+  become_user: "{{ minio_user.name }}"
+  containers.podman.podman_image:
+    name: "{{ minio_podman_image }}"
+
+- name: Create data directory for minio.
+  ansible.builtin.file:
+    path: "{{ minio_user.home }}/{{ item }}"
+    state: directory
+    owner: "{{ minio_user.name }}"
+    group: "{{ minio_user.name }}"
+    mode: '0755'
+  loop:
+    - data
+    - certs
+
+- name: Create license key file for minio.
+  ansible.builtin.copy:
+    content: "{{ minio_license_key }}"
+    dest: "{{ minio_user.home }}/minio.license"
+    owner: "{{ minio_user.name }}"
+    group: "{{ minio_user.name }}"
+    mode: '0600'
+
+# https://docs.min.io/enterprise/aistor-object-store/installation/container/install/
+- name: Run minio container.
+  become: true
+  become_user: "{{ minio_user.name }}"
+  containers.podman.podman_container:
+    name: "{{ minio_podman_pod_name }}"
+    image: "{{ minio_podman_image }}"
+    state: started
+    restart_policy: unless-stopped
+    command: server /data
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    volumes:
+      - "{{ minio_user.home }}/data:/mnt/data"
+      - "{{ minio_user.home }}/minio.license:/minio.license"
+      - "{{ minio_user.home }}/certs:/etc/minio/certs"

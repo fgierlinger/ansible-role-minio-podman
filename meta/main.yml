@@ -1,0 +1,29 @@
+---
+# SPDX-License-Identifier: MIT-0
+galaxy_info:
+  author: fgierlinger
+  description: MinIO Podman role
+  role_name: minio_podman
+  namespace: fgierlinger
+
+  license: MIT
+
+  min_ansible_version: "2.2"
+
+  galaxy_tags: [minio, podman, storage, objectstorage, s3]
+
+  platforms:
+    - name: Rocky
+      versions:
+        - "9.2"
+    - name: Ubuntu
+      versions:
+        - noble
+    - name: Debian
+      versions:
+        - trixie
+
+dependencies: []
+
+collections:
+  - containers.podman
