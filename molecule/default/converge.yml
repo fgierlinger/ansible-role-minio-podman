@@ -3,5 +3,7 @@
 - name: Converge
   hosts: all
   gather_facts: false
+  vars:
+    minio_license_key: "ThisIsADummyLicenseKeyForTestingPurposesOnly"
   roles:
     - role: fgierlinger.minio_podman
