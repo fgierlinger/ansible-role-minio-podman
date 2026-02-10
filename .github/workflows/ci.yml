@@ -29,11 +29,12 @@ jobs:
           python-version: '3.13'  # Can't go to 3.14+ until Ansible 13.x
 
       - name: Install test dependencies.
-        run: pip3 install yamllint
+        run: pip3 install yamllint ansible-lint
 
       - name: Lint code.
         run: |
           yamllint .
+          ansible-lint -v --exclude molecule/ --exclude .github
 
   molecule:
     name: Molecule
