@@ -42,10 +42,9 @@
     state: present
 
 - name: Install podman.
-  ansible.builtin.apt:
+  ansible.builtin.package:
     name: podman
     state: present
-    update_cache: true
 
 - name: Pull minio image.
   become: true
