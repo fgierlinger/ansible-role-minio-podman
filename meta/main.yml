@@ -13,9 +13,6 @@ galaxy_info:
   galaxy_tags: [minio, podman, storage, objectstorage, s3]
 
   platforms:
-    - name: Rocky
-      versions:
-        - "9.2"
     - name: Ubuntu
       versions:
         - noble
