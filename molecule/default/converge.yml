@@ -1,0 +1,9 @@
+---
+# SPDX-License-Identifier: MIT-0
+- name: Converge
+  hosts: all
+  gather_facts: false
+  vars:
+    minio_podman_license_key: "ThisIsADummyLicenseKeyForTestingPurposesOnly"
+  roles:
+    - role: fgierlinger.minio_podman
